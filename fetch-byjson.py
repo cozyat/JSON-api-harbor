@@ -41,12 +41,17 @@ def send_post_requests(hostnames):
 def convert_json_to_pdf(json_folder_path, output_pdf_folder):
     for file_name in os.listdir(json_folder_path):
         if file_name.endswith('.json'):
-            with open(os.path.join(json_folder_path, file_name), 'r') as json_file:
+            input_json_path = os.path.join(json_folder_path, file_name)
+            output_pdf_path = os.path.join(output_pdf_folder, os.path.splitext(file_name)[0] + '.pdf')
+            with open(input_json_path, 'r') as json_file:
                 data = json.load(json_file)
                 pretty_json = json.dumps(data, indent=4)
-
-                output_pdf_path = os.path.join(output_pdf_folder, os.path.splitext(file_name)[0] + '.pdf')
                 c = canvas.Canvas(output_pdf_path, pagesize=letter)
+
+                c.setFillColorRGB(0, 0, 0)
+                c.rect(0, 0, letter[0], letter[1], fill=1)
+                c.setFillColorRGB(1, 1, 1)
+
                 y_offset = 750
 
                 for line in pretty_json.split('\n'):
@@ -58,6 +63,7 @@ def convert_json_to_pdf(json_folder_path, output_pdf_folder):
                         c.setFont("Helvetica", 12)
                         y_offset = 750
                 c.save()
+
 
 def main():
     hostnames = retrieve_hostnames_from_excel()
