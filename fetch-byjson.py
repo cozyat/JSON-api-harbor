@@ -1,10 +1,8 @@
 from reportlab.lib.pagesizes import letter
 from reportlab.pdfgen import canvas
 from openpyxl import load_workbook
-import requests
-import json
-import sys
-import os
+import requests, json, sys, os
+
 
 def retrieve_hostnames_from_excel():
     wb = load_workbook('hostname-sheet-retrieve/inputhostnames.xlsx')
@@ -18,6 +16,7 @@ def retrieve_hostnames_from_excel():
 
     wb.close()
     return hostnames
+
 
 def send_post_requests(hostnames):
     url = 'https://jsonplaceholder.typicode.com/posts'
@@ -38,16 +37,18 @@ def send_post_requests(hostnames):
             else:
                 print("Request failed")
 
+
 def convert_json_to_pdf(json_folder_path, output_pdf_folder):
     for file_name in os.listdir(json_folder_path):
         if file_name.endswith('.json'):
             input_json_path = os.path.join(json_folder_path, file_name)
             output_pdf_path = os.path.join(output_pdf_folder, os.path.splitext(file_name)[0] + '.pdf')
+            
             with open(input_json_path, 'r') as json_file:
                 data = json.load(json_file)
                 pretty_json = json.dumps(data, indent=4)
                 c = canvas.Canvas(output_pdf_path, pagesize=letter)
-
+                
                 c.setFillColorRGB(0, 0, 0)
                 c.rect(0, 0, letter[0], letter[1], fill=1)
                 c.setFillColorRGB(1, 1, 1)
@@ -66,12 +67,14 @@ def convert_json_to_pdf(json_folder_path, output_pdf_folder):
 
 
 def main():
-    hostnames = retrieve_hostnames_from_excel()
-    send_post_requests(hostnames)
-
     json_folder_path = 'hostname-sheet-retrieve/output-json'
     output_pdf_folder = 'hostname-sheet-retrieve/output-pdf'
+    
+    hostnames = retrieve_hostnames_from_excel()
+    send_post_requests(hostnames)
     convert_json_to_pdf(json_folder_path, output_pdf_folder)
+
 
 if __name__ == "__main__":
     main()
+    sys.exit()
