@@ -1,7 +1,10 @@
 from reportlab.lib.pagesizes import letter
 from reportlab.pdfgen import canvas
 from openpyxl import load_workbook
-import requests, json, sys, os
+import requests
+import json
+import sys
+import os
 
 
 def retrieve_hostnames_from_excel():
